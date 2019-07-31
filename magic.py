@@ -96,13 +96,6 @@ class Magic:
         for token in token_list:
             if token not in ("AND", "OR"):
                 post_fix_list.append(token)
-            elif token == '(':
-                op_stack.push(token)
-            elif token == ')':
-                top_token = op_stack.pop()
-                while top_token != '(':
-                    post_fix_list.append(top_token)
-                    top_token = op_stack.pop()
             else:
                 while (not op_stack.isEmpty()) and \
                         (prec[op_stack.peek()] >= prec[token]):
