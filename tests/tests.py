@@ -1,10 +1,10 @@
 import unittest
-from magic import Magic
+from memFilter import MemFilter
 
 
-class TestMagicFilter(unittest.TestCase):
+class TestMemFilterFilter(unittest.TestCase):
     def setUp(self):
-        self.m = Magic()
+        self.m = MemFilter()
 
     def test_filter_and_or(self):
         self.m.set_data([0, 1, 2, 3, 5, 7])
@@ -13,7 +13,7 @@ class TestMagicFilter(unittest.TestCase):
         self.assertEqual(self.m.get_filter_data(), [1, 3])
 
     def test_filter_with_object(self):
-        m1 = Magic()
+        m1 = MemFilter()
         m1.filter(__lt=5, __gt=2)._or(__eq=1)
 
         self.m.set_data([0, 1, 2, 3, 5, 7])
@@ -22,10 +22,10 @@ class TestMagicFilter(unittest.TestCase):
         self.assertEqual(self.m.get_filter_data(), [1, 3])
 
     def test_filter_with_objects(self):
-        m1 = Magic()
+        m1 = MemFilter()
         m1.filter(__lt=5, __gt=2)
 
-        m2 = Magic()
+        m2 = MemFilter()
         m2.filter(__in=[3])
 
         self.m.set_data([0, 1, 2, 3, 4, 5, 7])
