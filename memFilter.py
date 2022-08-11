@@ -9,16 +9,31 @@ from pythonds.basic.stack import Stack
 class MemFilter:
 
     @staticmethod
-    def is_null(left_value, value):
+    def is_null(left_value, value: bool):
         if value:
             return left_value is None
         return left_value is not None
 
     @staticmethod
-    def is_range(left_value, value):
+    def is_blank(left_value, value: bool):
+        if value:
+            return left_value == ""
+        return left_value != ""
+
+    @staticmethod
+    def is_range(left_value, value, l_close=True, r_close=False):
         try:
             min_value, max_value = value[0], value[1]
-            return min_value <= left_value < max_value
+            flag = True
+            if min_value is not None:
+                flag &= (left_value >= min_value)
+            if max_value is not None:
+                flag &= (left_value <= max_value)
+            if not l_close:
+                flag &= (min_value != left_value)
+            if not r_close:
+                flag &= (left_value != max_value)
+            return flag
         except Exception:
             pass
         return False
@@ -47,8 +62,8 @@ class MemFilter:
     def is_contains(left_value, value, ignore_case=False):
         try:
             if ignore_case:
-                return left_value.lower().find(value.lower()) > 0
-            return left_value.find(value) > 0
+                return left_value.lower().find(value.lower()) >= 0
+            return left_value.find(value) >= 0
         except Exception:
             pass
         return False
@@ -81,7 +96,12 @@ class MemFilter:
             "gt": lambda x: get_left_value(x) > value,
             "ne": lambda x: get_left_value(x) != value,
             "range": lambda x: cls.is_range(get_left_value(x), value),
+            "range00": lambda x: cls.is_range(get_left_value(x), value, False, False),
+            "range01": lambda x: cls.is_range(get_left_value(x), value, False, True),
+            "range10": lambda x: cls.is_range(get_left_value(x), value, True, False),
+            "range11": lambda x: cls.is_range(get_left_value(x), value, True, True),
             "isnull": lambda x: cls.is_null(get_left_value(x), value),
+            "isblank": lambda x: cls.is_blank(get_left_value(x), value),
             "startswith": lambda x: cls.is_startswith(get_left_value(x), value),
             "istartswith": lambda x: cls.is_startswith(get_left_value(x), value, ignore_case=True),
             "endswith": lambda x: cls.is_endswith(get_left_value(x), value),
